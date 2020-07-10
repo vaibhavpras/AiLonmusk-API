@@ -32,24 +32,23 @@ async def homepage(request):
         return UJSONResponse({'text': ''},
                              headers=response_header)
 
-    
     text = gpt2.generate(sess,
                          length=55,
-                         temperature=1.0,
+                         temperature=float(params.get('temperature', 0.7)),
                          top_k=int(params.get('top_k', 0)),
                          top_p=float(params.get('top_p', 0)),
-                         prefix='<|startoftext|>' + params.get('prefix', ''),
+                         prefix= '<|startoftext|>' + params.get('prefix', '')[:500],
                          truncate='<|endoftext|>',
                          include_prefix=True,
-                         nsamples=params.get('nsamples', 1),
-                         return_as_list=True
-                         )[0]
+                         return_as_list=True,
+                         nsamples=int(params.get('nsamples',1))
+                         )
 
     for x in text:
         x = x.replace('<|startoftext|>', '')
         x = x.replace('<|endoftext|>', '')
+        x = x.replace('\n', '')
         x = x.replace('  ', ' ')
-
 
     generate_count += 1
     if generate_count == 8:
@@ -61,7 +60,7 @@ async def homepage(request):
         generate_count = 0
 
     gc.collect()
-    return UJSONResponse({'text_list': text},
+    return UJSONResponse({'text': text},
                          headers=response_header)
 
 if __name__ == '__main__':
