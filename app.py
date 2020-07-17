@@ -34,7 +34,7 @@ async def homepage(request):
 
     text = gpt2.generate(sess,
                          length=55,
-                         temperature=float(params.get('temperature', 0.7)),
+                         temperature=float(params.get('temperature', 0.9)),
                          top_k=int(params.get('top_k', 0)),
                          top_p=float(params.get('top_p', 0)),
                          prefix= '<|startoftext|>' + params.get('prefix', '')[:500],
@@ -42,13 +42,13 @@ async def homepage(request):
                          include_prefix=True,
                          return_as_list=True,
                          nsamples=int(params.get('nsamples',1))
-                         )
+                         )[0]
 
-    for x in text:
-        x = x.replace('<|startoftext|>', '')
-        x = x.replace('<|endoftext|>', '')
-        x = x.replace('\n', '')
-        x = x.replace('  ', ' ')
+    #for x in text:
+      #  x = x.replace('<|startoftext|>', '')
+       # x = x.replace('<|endoftext|>', '')
+       # x = x.replace('\n', '')
+        #x = x.replace('  ', ' ')
 
     generate_count += 1
     if generate_count == 8:
